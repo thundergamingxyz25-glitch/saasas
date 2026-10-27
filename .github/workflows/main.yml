@@ -15,7 +15,7 @@ jobs:
       - name: Execute Arc Panel Install Script
         run: |
           echo "Running arc-panel install script..."
-          curl -sSL https://raw.githubusercontent.com/shauryapatel044-dotcom/arc-panel/main/install.sh | bash
+          curl -sSL https://raw.githubusercontent.com/shauryapatel044-dotcom/arc-panel/main/install.sh | sudo bash
 
       - name: Install Tailscale
         run: |
