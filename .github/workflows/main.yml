@@ -1,0 +1,44 @@
+name: Arc Panel & Tailscale
+
+on:
+  workflow_dispatch:
+
+jobs:
+  setup-and-run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360 # Maximum allowed duration on GitHub Actions (6 hours)
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Execute Arc Panel Install Script
+        run: |
+          echo "Running arc-panel install script..."
+          curl -sSL https://raw.githubusercontent.com/shauryapatel044-dotcom/arc-panel/main/install.sh | bash
+
+      - name: Install Tailscale
+        run: |
+          echo "Installing Tailscale..."
+          curl -fsSL https://tailscale.com/install.sh | sh
+
+      - name: Connect Tailscale & Show Login Link
+        run: |
+          echo "=========================================================="
+          echo " Starting Tailscale. Look for the authentication link below:"
+          echo "=========================================================="
+          # Running without an authkey outputs the interactive login URL into logs and waits for authorization
+          sudo tailscale up --qr=false --hostname="github-runner"
+
+          echo "=========================================================="
+          TAILSCALE_IP=$(tailscale ip -4)
+          echo "Tailscale connected!"
+          echo "Runner IP: ${TAILSCALE_IP}"
+          echo "Access your panel in the browser at: http://${TAILSCALE_IP}:<PORT>"
+          echo "=========================================================="
+
+      - name: Keep Runner Alive
+        run: |
+          echo "Runner is active. Press 'Cancel workflow' in GitHub to stop."
+          # Keeps the runner alive up to 6 hours (21600 seconds)
+          sleep 21600
